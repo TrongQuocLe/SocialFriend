@@ -72,7 +72,8 @@ public class CliApp {
         System.out.println("6. View Followers");
         System.out.println("7. Friend Recommendations");
         System.out.println("8. View Popular Users");
-        System.out.println("9. Logout");
+        System.out.println("9. View Mutual Friends");
+        System.out.println("10. Logout");
         System.out.print("Choose: ");
         int choice = Integer.parseInt(scanner.nextLine());
 
@@ -85,7 +86,8 @@ public class CliApp {
             case 6 -> viewFollowers();
             case 7 -> viewFriendRecs();
             case 8 -> viewPopular();
-            case 9 -> {
+            case 9 -> viewMutual();
+            case 10 -> {
                 currentUsername = null;
                 System.out.println("👋 Logged out.");
             }
@@ -144,12 +146,20 @@ public class CliApp {
     }
 
     private static void viewFriendRecs() {
-    Set<String> friendRecs = userService.viewFriendRecs(currentUsername);
-    System.out.print("These are your friend recommendations:\n" + friendRecs);
+        Set<String> friendRecs = userService.viewFriendRecs(currentUsername);
+        System.out.print("These are your friend recommendations:\n" + friendRecs);
     }
 
     private static void viewPopular() {
-    Set<String> popularUsers = userService.viewPopular();
-    System.out.print("These are the top ten most popular users:\n" + popularUsers);
+        Set<String> popularUsers = userService.viewPopular();
+        System.out.print("These are the top ten most popular users:\n" + popularUsers);
+    }
+
+    private static void viewMutual() {
+        System.out.print("Enter username of who you want to see mutual friends with: ");
+        String otherUsername = scanner.nextLine();
+
+        Set<String> mutualFollowers = userService.viewMutual(currentUsername, otherUsername);
+        System.out.print("Users followed by both you and " + otherUsername + ":\n" + mutualFollowers);
     }
 }
