@@ -83,7 +83,8 @@ public class CliApp {
             case 5 -> viewFollowing();
             case 6 -> viewFollowers();
             case 7 -> viewFriendRecs();
-            case 8 -> {
+            case 8 -> viewPopular();
+            case 9 -> {
                 currentUsername = null;
                 System.out.println("👋 Logged out.");
             }
@@ -136,14 +137,18 @@ public class CliApp {
         System.out.print("These are users you follow:\n" + following);
     }
 
-    
     private static void viewFollowers() {
         Set<String> followers = userService.viewFollowers(currentUsername);
         System.out.print("These are users who follow you:\n" + followers);
     }
 
-        private static void viewFriendRecs() {
-        Set<String> friendRecs = userService.viewFriendRecs(currentUsername);
-        System.out.print("These are your friend recommendations:\n" + friendRecs);
+    private static void viewFriendRecs() {
+    Set<String> friendRecs = userService.viewFriendRecs(currentUsername);
+    System.out.print("These are your friend recommendations:\n" + friendRecs);
+    }
+
+    private static void viewPopular() {
+    Set<String> popularUsers = userService.viewPopular();
+    System.out.print("These are the top ten most popular users:\n" + popularUsers);
     }
 }
