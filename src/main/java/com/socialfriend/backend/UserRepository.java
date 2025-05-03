@@ -15,4 +15,6 @@ public interface UserRepository extends Neo4jRepository<User, Long> {
     List<User> findRecsByUsername(@Param("username") String username);
     @Query("MATCH (follower:User)-[:FOLLOWS]->(user:User) WITH user, COUNT(follower) AS followerCount RETURN user ORDER BY followerCount DESC LIMIT 10")
     List<User> findPopularUsers();
+    @Query("MATCH (u1: User{username: $username})-[:FOLLOWS]->(mutual:User)<-[:FOLLOWS]-(u2:User{username: $otherUsername}) RETURN mutual")
+    List<User> findCommonUsers(@Param("username") String username, @Param("otherUsername") String otherUsername);
 }
