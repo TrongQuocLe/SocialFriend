@@ -71,7 +71,8 @@ public class CliApp {
         System.out.println("5. View Following");
         System.out.println("6. View Followers");
         System.out.println("7. Friend Recommendations");
-        System.out.println("8. Logout");
+        System.out.println("8. View Popular Users");
+        System.out.println("9. Logout");
         System.out.print("Choose: ");
         int choice = Integer.parseInt(scanner.nextLine());
 
