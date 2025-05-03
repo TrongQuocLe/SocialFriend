@@ -116,14 +116,30 @@ public class UserService {
         else {
             return new HashSet<>();
         }
-        }
-    public Set<String> viewPopular() {
+    }
 
+    public Set<String> viewPopular() {
         List<User> popularUsers = userRepository.findPopularUsers();
         Set<String> popularUsernames = new HashSet<>();
         for (User popularUser : popularUsers) {
             popularUsernames.add(popularUser.getUsername());
         }
         return popularUsernames;
+    }
+
+    public Set<String> viewMutual(String username, String otherUsername) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+
+        if (userOpt.isPresent()) {
+            List<User> mutualFollowings = userRepository.findCommonUsers(username, otherUsername);
+            Set<String> mutualFollowingsUsernames = new HashSet<>();
+            for (User mutualFollowing : mutualFollowings) {
+                mutualFollowingsUsernames.add(mutualFollowing.getUsername());  // Add the username to the set
+            }
+            return mutualFollowingsUsernames;
+        }
+        else {
+            return new HashSet<>();
+        }
     }
 }
