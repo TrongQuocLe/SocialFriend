@@ -101,4 +101,19 @@ public class UserService {
         }
         
     }
+
+        public Set<String> viewFriendRecs(String username) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+
+        if (userOpt.isPresent()) {
+            List<User> friendRecs = userRepository.findRecsByUsername(username);
+            Set<String> friendRecsUsernames = new HashSet<>();
+            for (User friendRec : friendRecs) {
+                friendRecsUsernames.add(friendRec.getUsername());
+            }
+            return friendRecsUsernames;
+        }
+        else {
+            return new HashSet<>();
+        }
 }
