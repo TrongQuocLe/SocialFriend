@@ -102,7 +102,7 @@ public class UserService {
         
     }
 
-        public Set<String> viewFriendRecs(String username) {
+    public Set<String> viewFriendRecs(String username) {
         Optional<User> userOpt = userRepository.findByUsername(username);
 
         if (userOpt.isPresent()) {
@@ -116,4 +116,14 @@ public class UserService {
         else {
             return new HashSet<>();
         }
+        }
+    public Set<String> viewPopular() {
+
+        List<User> popularUsers = userRepository.findPopularUsers();
+        Set<String> popularUsernames = new HashSet<>();
+        for (User popularUser : popularUsers) {
+            popularUsernames.add(popularUser.getUsername());
+        }
+        return popularUsernames;
+    }
 }
