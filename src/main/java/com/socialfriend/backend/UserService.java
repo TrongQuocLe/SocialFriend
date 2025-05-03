@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -65,5 +68,37 @@ public class UserService {
             return true;
         }
         return false;
+    }
+
+        public Set<String> viewFollowing(String username) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+
+        if (userOpt.isPresent()) {
+            Set<String> followingUsernames = new HashSet<>();
+            for (User followedUser : userOpt.get().getFollows()) {
+                followingUsernames.add(followedUser.getUsername());  // Add the username to the set
+            }
+            return followingUsernames;
+        }
+        else {
+            return new HashSet<>();
+        }
+        
+    }
+    public Set<String> viewFollowers(String username) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+
+        if (userOpt.isPresent()) {
+            List<User> followers = userRepository.findFollowersByUsername(username);
+            Set<String> followerUsernames = new HashSet<>();
+            for (User follower : followers) {
+                followerUsernames.add(follower.getUsername());
+            }
+            return followerUsernames;
+        }
+        else {
+            return new HashSet<>();
+        }
+        
     }
 }
