@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.Scanner;
 
 public class CliApp {
@@ -67,7 +68,9 @@ public class CliApp {
         System.out.println("2. Edit Profile");
         System.out.println("3. Follow User");
         System.out.println("4. Unfollow User");
-        System.out.println("5. Logout");
+        System.out.println("5. View Following");
+        System.out.println("6. View Followers");
+        System.out.println("7. Logout");
         System.out.print("Choose: ");
         int choice = Integer.parseInt(scanner.nextLine());
 
@@ -76,7 +79,9 @@ public class CliApp {
             case 2 -> editProfile();
             case 3 -> followUser();
             case 4 -> unfollowUser();
-            case 5 -> {
+            case 5 -> viewFollowing();
+            case 6 -> viewFollowers();
+            case 7 -> {
                 currentUsername = null;
                 System.out.println("👋 Logged out.");
             }
@@ -122,5 +127,16 @@ public class CliApp {
         } else {
             System.out.println("❌ Unable to unfollow user.");
         }
+    }
+
+    private static void viewFollowing() {
+        Set<String> following = userService.viewFollowing(currentUsername);
+        System.out.print("These are users you follow:\n" + following);
+    }
+
+    
+    private static void viewFollowers() {
+        Set<String> followers = userService.viewFollowers(currentUsername);
+        System.out.print("These are users who follow you:\n" + followers);
     }
 }
