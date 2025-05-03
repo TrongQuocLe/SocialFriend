@@ -70,7 +70,8 @@ public class CliApp {
         System.out.println("4. Unfollow User");
         System.out.println("5. View Following");
         System.out.println("6. View Followers");
-        System.out.println("7. Logout");
+        System.out.println("7. Friend Recommendations");
+        System.out.println("8. Logout");
         System.out.print("Choose: ");
         int choice = Integer.parseInt(scanner.nextLine());
 
@@ -81,7 +82,8 @@ public class CliApp {
             case 4 -> unfollowUser();
             case 5 -> viewFollowing();
             case 6 -> viewFollowers();
-            case 7 -> {
+            case 7 -> viewFriendRecs();
+            case 8 -> {
                 currentUsername = null;
                 System.out.println("👋 Logged out.");
             }
@@ -138,5 +140,10 @@ public class CliApp {
     private static void viewFollowers() {
         Set<String> followers = userService.viewFollowers(currentUsername);
         System.out.print("These are users who follow you:\n" + followers);
+    }
+
+        private static void viewFriendRecs() {
+        Set<String> friendRecs = userService.viewFriendRecs(currentUsername);
+        System.out.print("These are your friend recommendations:\n" + friendRecs);
     }
 }
