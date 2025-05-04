@@ -65,20 +65,28 @@ public class UserService {
     }
 
     public Set<String> viewFriendRecs(String username) {
-        Optional<User> userOpt = userRepo.findByUsername(username);
-
-        if (userOpt.isPresent()) {
-            List<User> friendRecs = userRepo.findRecsByUsername(username);
-            Set<String> friendRecsUsernames = new HashSet<>();
-            for (User friendRec : friendRecs) {
-                friendRecsUsernames.add(friendRec.getUsername());
-            }
-            return friendRecsUsernames;
+        List<User> friendRecs = userRepo.findFriendRecsByUsername(username);
+        Set<String> friendRecsUsernames = new HashSet<>();
+        for (User friendRec : friendRecs) {
+            friendRecsUsernames.add(friendRec.getUsername());
         }
-        else {
-            return new HashSet<>();
-        }
+        return friendRecsUsernames;
     }
+    // public Set<String> viewFriendRecs(String username) {
+    //     Optional<User> userOpt = userRepo.findByUsername(username);
+
+    //     if (userOpt.isPresent()) {
+    //         List<User> friendRecs = userRepo.findRecsByUsername(username);
+    //         Set<String> friendRecsUsernames = new HashSet<>();
+    //         for (User friendRec : friendRecs) {
+    //             friendRecsUsernames.add(friendRec.getUsername());
+    //         }
+    //         return friendRecsUsernames;
+    //     }
+    //     else {
+    //         return new HashSet<>();
+    //     }
+    // }
 
     public Set<String> viewPopular() {
         List<User> popularUsers = userRepo.findPopularUsers();
