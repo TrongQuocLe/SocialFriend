@@ -101,12 +101,11 @@ public class CliApp {
             case 4 -> unfollowUser();
             case 5 -> viewFollowing();
             case 6 -> viewFollowers();
-            case 7 -> viewFriendRecs();
-            case 8 -> viewMutual();
-            case 9 -> viewFriendRecs();
-            case 10 -> searchUsers();
-            case 11 -> viewPopular();
-            case 12 -> {
+            case 7 -> viewMutual();
+            case 8 -> viewFriendRecs();
+            case 9 -> searchUsers();
+            case 10 -> viewPopular();
+            case 11 -> {
                 currentUsername = null;
                 System.out.println("👋 Logged out.");
             }

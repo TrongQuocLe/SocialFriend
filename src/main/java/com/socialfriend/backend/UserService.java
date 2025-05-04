@@ -41,15 +41,7 @@ public class UserService {
     public Optional<User> updateProfile(String username, String name, String email,String bio) {
         return userRepo.updateProfile(username, name, email, bio);
     }
-    public List<User> getMutualConnections(Long userA, Long userB) {
-        return userRepo.getMutualConnections(userA, userB);
-    }
-    public List<User> getRecommendations(Long userId) {
-        return userRepo.getRecommendations(userId);
-    }
-    public List<User> getPopularUsers() {
-        return userRepo.getPopularUsers();
-    }
+
     public Long getTotalUsers() {
         return userRepo.getTotalUsers();
     }
