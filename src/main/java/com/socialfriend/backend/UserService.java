@@ -42,56 +42,26 @@ public class UserService {
         return userRepo.updateProfile(username, name, email, bio);
     }
 
-    public List<User> getFollowing(Long userId) {
-        return userRepo.getFollowing(userId);
-    }
-    public List<User> getFollowers(Long userId) {
-        return userRepo.getFollowers(userId);
-    }
-    public List<User> getMutualConnections(Long userA, Long userB) {
-        return userRepo.getMutualConnections(userA, userB);
-    }
-    public List<User> getRecommendations(Long userId) {
-        return userRepo.getRecommendations(userId);
-    }
-    public List<User> getPopularUsers() {
-        return userRepo.getPopularUsers();
-    }
     public Long getTotalUsers() {
         return userRepo.getTotalUsers();
     }
 
-    public Set<String> viewFollowing(String username) {
-        Optional<User> userOpt = userRepo.findByUsername(username);
-
-        if (userOpt.isPresent()) {
-            List<User> following = userRepo.findFollowingByUsername(username);
-            Set<String> followingUsernames = new HashSet<>();
-            for (User follow : following) {
-                followingUsernames.add(follow.getUsername());
-            }
-            return followingUsernames;
+    public Set<String> viewFollowing (String username) {
+        List<User> following = userRepo.findFollowingByUsername(username);
+        Set<String> followingUsernames = new HashSet<>();
+        for (User follow : following) {
+            followingUsernames.add(follow.getUsername());
         }
-        else {
-            return new HashSet<>();
-        }
+        return followingUsernames;
     }
     
-    public Set<String> viewFollowers(String username) {
-        Optional<User> userOpt = userRepo.findByUsername(username);
-
-        if (userOpt.isPresent()) {
-            List<User> followers = userRepo.findFollowersByUsername(username);
-            Set<String> followerUsernames = new HashSet<>();
-            for (User follower : followers) {
-                followerUsernames.add(follower.getUsername());
-            }
-            return followerUsernames;
+    public Set<String> viewFollowers (String username) {
+        List<User> followers = userRepo.findFollowersByUsername(username);
+        Set<String> followersUsernames = new HashSet<>();
+        for (User follower : followers) {
+            followersUsernames.add(follower.getUsername());
         }
-        else {
-            return new HashSet<>();
-        }
-        
+        return followersUsernames;
     }
 
     public Set<String> viewFriendRecs(String username) {

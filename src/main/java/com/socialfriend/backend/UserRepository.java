@@ -62,12 +62,6 @@ public interface UserRepository extends Neo4jRepository<User, Long> {
     """)
     Optional<User> unfollow(@Param("fromUsername") String fromUsername, @Param("toUsername") String toUsername);
 
-    @Query("MATCH (u:User)-[:FOLLOWS]->(f:User) WHERE id(u) = $userId RETURN f")
-    List<User> getFollowing(@Param("userId") Long userId);
-
-    @Query("MATCH (f:User)-[:FOLLOWS]->(u:User) WHERE id(u) = $userId RETURN f")
-    List<User> getFollowers(@Param("userId") Long userId);
-
     @Query("""
     MATCH (a:User)-[:FOLLOWS]->(x:User)<-[:FOLLOWS]-(b:User)
     WHERE id(a) = $userA AND id(b) = $userB
@@ -96,11 +90,12 @@ public interface UserRepository extends Neo4jRepository<User, Long> {
     Long getTotalUsers();
 
     @Query("""
-    MATCH (u:User {username: $username})-[:FOLLOWS]->(f:User)
-    RETURN f
+    MATCH (follower:User {username: $username})-[:FOLLOWS]->(followee:User) RETURN followee
     """)
     List<User> findFollowingByUsername(@Param("username") String username);
 
-    @Query("MATCH (follower:User)-[:FOLLOWS]->(followee:User) WHERE followee.username = $username RETURN follower")
+    @Query("""
+    MATCH (follower:User)-[:FOLLOWS]->(followee:User {username: $username}) RETURN follower
+    """)
     List<User> findFollowersByUsername(@Param("username") String username);
 }

@@ -78,8 +78,8 @@ public class CliApp {
         System.out.println("4. Unfollow User");
         System.out.println("5. View Following");
         System.out.println("6. View Followers");
-        System.out.println("7. Friend Recommendations");
-        System.out.println("8. View Mutual Friends");
+        System.out.println("7. View Mutual Friends");
+        System.out.println("8. View Friend Recommendations");
         System.out.println("9. Search Users");
         System.out.println("10. View popular users");
         System.out.println("11. Logout");
@@ -100,8 +100,8 @@ public class CliApp {
             case 4 -> unfollowUser();
             case 5 -> viewFollowing();
             case 6 -> viewFollowers();
-            case 7 -> viewFriendRecs();
-            case 8 -> viewMutual();
+            case 7 -> viewMutual();
+            case 8 -> viewFriendRecs();
             case 9 -> searchUsers();
             case 10 -> viewPopular();
             case 11 -> {
@@ -157,10 +157,10 @@ public class CliApp {
         String followeeUsername = scanner.nextLine();
         try {
             userService.follow(currentUsername, followeeUsername);
+            System.out.println("✅ You followed " + followeeUsername);
         } catch (Exception e) {
             System.out.println("❌ Unable to follow user. ");
         } 
-        System.out.println("✅ You followed " + followeeUsername);
     }
 
     private static void unfollowUser() {
