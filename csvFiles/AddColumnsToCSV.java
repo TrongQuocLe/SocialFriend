@@ -22,7 +22,7 @@ public class AddColumnsToCSV {
         BufferedWriter writer = new BufferedWriter(new FileWriter("modified_" + args[0]));
         
         // add headers to output file
-        writer.write("id,name,email,username,password\n");
+        writer.write("id,name,email,username,password,bio\n");
 
         // skip first line so data starts at id 0
         reader.readLine(); 
@@ -35,9 +35,10 @@ public class AddColumnsToCSV {
             String email = "user" + columns[0] + "@example.com";
             String username = "username_" + columns[0];
             String password = "password" + columns[0];
+            String bio = "this is the user " + columns[0] + " bio";
 
             // Write the updated line to the new CSV file
-            writer.write(columns[0] + "," + name + "," + email + "," + username + "," + password + "\n");
+            writer.write(columns[0] + "," + name + "," + email + "," + username + "," + password + "," + bio + "\n");
         }
 
         reader.close();
