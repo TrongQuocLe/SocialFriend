@@ -90,19 +90,12 @@ public class UserService {
     }
 
     public Set<String> viewMutual(String username, String otherUsername) {
-        Optional<User> userOpt = userRepo.findByUsername(username);
-
-        if (userOpt.isPresent()) {
-            List<User> mutualFollowings = userRepo.findCommonUsers(username, otherUsername);
-            Set<String> mutualFollowingsUsernames = new HashSet<>();
-            for (User mutualFollowing : mutualFollowings) {
-                mutualFollowingsUsernames.add(mutualFollowing.getUsername());  // Add the username to the set
-            }
-            return mutualFollowingsUsernames;
+        List<User> mutualFollowings = userRepo.findCommonUsers(username, otherUsername);
+        Set<String> mutualFollowingsUsernames = new HashSet<>();
+        for (User mutualFollowing : mutualFollowings) {
+            mutualFollowingsUsernames.add(mutualFollowing.getUsername());
         }
-        else {
-            return new HashSet<>();
-        }
+        return mutualFollowingsUsernames;
     }
 
     public Set<String> searchUsers(String query) {
