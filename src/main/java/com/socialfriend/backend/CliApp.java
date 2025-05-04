@@ -84,7 +84,7 @@ public class CliApp {
         System.out.println("10. View Friend Recommendations");
         System.out.println("11. Search Users");
         System.out.println("12. View popular users");
-        System.out.println("20. Logout");
+        System.out.println("13. Logout");
         System.out.print("Choose: ");
         String input = scanner.nextLine();
         int choice;
@@ -103,12 +103,11 @@ public class CliApp {
             case 5 -> viewFollowing();
             case 6 -> viewFollowers();
             case 7 -> viewFriendRecs();
-            case 8 -> viewPopular();
-            case 9 -> viewMutual();
-            case 10 -> viewFriendRecs();
-            case 11 -> searchUsers();
-            case 12 -> viewPopular();
-            case 20 -> {
+            case 8 -> viewMutual();
+            case 9 -> viewFriendRecs();
+            case 10 -> searchUsers();
+            case 11 -> viewPopular();
+            case 12 -> {
                 currentUsername = null;
                 System.out.println("👋 Logged out.");
             }
