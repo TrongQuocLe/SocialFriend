@@ -159,10 +159,10 @@ public class CliApp {
         String followeeUsername = scanner.nextLine();
         try {
             userService.follow(currentUsername, followeeUsername);
+            System.out.println("✅ You followed " + followeeUsername);
         } catch (Exception e) {
             System.out.println("❌ Unable to follow user. ");
         } 
-        System.out.println("✅ You followed " + followeeUsername);
     }
 
     private static void unfollowUser() {
