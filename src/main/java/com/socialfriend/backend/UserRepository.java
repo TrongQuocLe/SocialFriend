@@ -8,36 +8,40 @@ import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends Neo4jRepository<User, Long> {
+
     Optional<User> findByUsername(String username);
-    @Query("MATCH (follower:User)-[:FOLLOWS]->(followee:User) WHERE followee.username = $username RETURN follower")
-    List<User> findFollowersByUsername(@Param("username") String username);
+
     @Query("MATCH (current:User{username: $username})-[:FOLLOWS]->(friend:User)-[:FOLLOWS]->(recommended:User) WHERE NOT (current)-[:FOLLOWS]->(recommended) AND current <> recommended RETURN DISTINCT recommended")
     List<User> findRecsByUsername(@Param("username") String username);
+
     @Query("MATCH (follower:User)-[:FOLLOWS]->(user:User) WITH user, COUNT(follower) AS followerCount RETURN user ORDER BY followerCount DESC LIMIT 10")
     List<User> findPopularUsers();
+
     @Query("MATCH (u1: User{username: $username})-[:FOLLOWS]->(mutual:User)<-[:FOLLOWS]-(u2:User{username: $otherUsername}) RETURN mutual")
     List<User> findCommonUsers(@Param("username") String username, @Param("otherUsername") String otherUsername);
 
-    // Register a new user
     @Query("CREATE (u:User {id: $id, username: $username, name: $name, email: $email, password: $password}) RETURN u")
     User register(@Param("id") Long id, @Param("username") String username, @Param("name") String name, @Param("email") String email, @Param("password") String password);
+
     @Query("""
     MATCH (u:User {username: $username, password: $password})
     RETURN u
     """)
     Optional<User> findByUsernameAndPassword(String username, String password);
 
-    List<User> findByNameContainingIgnoreCaseOrUsernameContainingIgnoreCase(String name, String username);
+    @Query("""
+    MATCH (u:User)
+    WHERE toLower(u.username) CONTAINS $query OR toLower(u.name) CONTAINS $query
+    RETURN u
+    """)
+    List<User> findByNameContainingIgnoreCaseOrUsernameContainingIgnoreCase(@Param("query") String $query);
 
-    // Get user profile by username
     @Query("MATCH (u:User {username: $username}) RETURN u")
     Optional<User> getProfile(@Param("username") String username);
 
-    // update user profile
     @Query("MATCH (u:User {username: $username}) SET u.name = $name, u.email = $email, u.bio = $bio RETURN u")
     Optional<User> updateProfile(@Param("username") String username, @Param("name") String name, @Param("email") String email, @Param("bio") String bio);
 
-    // follow a user
     @Query("""
     MATCH (fromNode:User {username: $fromUsername})
     OPTIONAL MATCH (toNode:User {username: $toUsername})
@@ -52,7 +56,6 @@ public interface UserRepository extends Neo4jRepository<User, Long> {
     """)
     Long getNumberOfFollower(@Param("username") String username);
 
-    // unfollow a user
     @Query("""
     MATCH (fromNode:User {username: $fromUsername})-[r:FOLLOWS]->(toNode:User {username: $toUsername})
     DELETE r
@@ -91,5 +94,13 @@ public interface UserRepository extends Neo4jRepository<User, Long> {
     MATCH (u:User) RETURN count(u) AS total_users;
     """)
     Long getTotalUsers();
-}
 
+    @Query("""
+    MATCH (u:User {username: $username})-[:FOLLOWS]->(f:User)
+    RETURN f
+    """)
+    List<User> findFollowingByUsername(@Param("username") String username);
+
+    @Query("MATCH (follower:User)-[:FOLLOWS]->(followee:User) WHERE followee.username = $username RETURN follower")
+    List<User> findFollowersByUsername(@Param("username") String username);
+}

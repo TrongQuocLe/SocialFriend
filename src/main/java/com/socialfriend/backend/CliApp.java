@@ -1,8 +1,8 @@
 package com.socialfriend.backend;
 
 import java.util.Optional;
-import java.util.Set;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
@@ -81,7 +81,10 @@ public class CliApp {
         System.out.println("7. Friend Recommendations");
         System.out.println("8. View Popular Users");
         System.out.println("9. View Mutual Friends");
-        System.out.println("10. Logout");
+        System.out.println("10. View Friend Recommendations");
+        System.out.println("11. Search Users");
+        System.out.println("12. View popular users");
+        System.out.println("20. Logout");
         System.out.print("Choose: ");
         String input = scanner.nextLine();
         int choice;
@@ -102,7 +105,10 @@ public class CliApp {
             case 7 -> viewFriendRecs();
             case 8 -> viewPopular();
             case 9 -> viewMutual();
-            case 10 -> {
+            case 10 -> viewFriendRecs();
+            case 11 -> searchUsers();
+            case 12 -> viewPopular();
+            case 20 -> {
                 currentUsername = null;
                 System.out.println("👋 Logged out.");
             }
@@ -198,6 +204,15 @@ public class CliApp {
 
         Set<String> mutualFollowers = userService.viewMutual(currentUsername, otherUsername);
         System.out.print("Users followed by both you and " + otherUsername + ":\n" + mutualFollowers);
+    }
+
+    private static void searchUsers() {
+        System.out.print("Enter username or name to search: ");
+        String query = scanner.nextLine();
+        query = query.toLowerCase();
+        query = query.trim();
+        Set<String> users = userService.searchUsers(query);
+        System.out.print("Users found:\n" + users);
     }
 
 }

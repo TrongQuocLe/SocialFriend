@@ -1,15 +1,12 @@
 package com.socialfriend.backend;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserService {
@@ -18,7 +15,6 @@ public class UserService {
     private UserRepository userRepo;
     
     public User register(User user) {
-        // return userRepo.save(user);
         return userRepo.register(user.getId(), user.getUsername(), user.getName(), user.getEmail(), user.getPassword());
     }
 
@@ -40,10 +36,6 @@ public class UserService {
 
     public Optional<User> unfollow(String fromUsername, String toUsername) {
         return userRepo.unfollow(fromUsername, toUsername);
-    }
-
-    public List<User> searchUsers(String query) {
-        return userRepo.findByNameContainingIgnoreCaseOrUsernameContainingIgnoreCase(query, query);
     }
 
     public Optional<User> updateProfile(String username, String name, String email,String bio) {
@@ -69,26 +61,27 @@ public class UserService {
         return userRepo.getTotalUsers();
     }
 
-        public Set<String> viewFollowing(String username) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
+    public Set<String> viewFollowing(String username) {
+        Optional<User> userOpt = userRepo.findByUsername(username);
 
         if (userOpt.isPresent()) {
+            List<User> following = userRepo.findFollowingByUsername(username);
             Set<String> followingUsernames = new HashSet<>();
-            for (User followedUser : userOpt.get().getFollows()) {
-                followingUsernames.add(followedUser.getUsername());  // Add the username to the set
+            for (User follow : following) {
+                followingUsernames.add(follow.getUsername());
             }
             return followingUsernames;
         }
         else {
             return new HashSet<>();
         }
-        
     }
+    
     public Set<String> viewFollowers(String username) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
+        Optional<User> userOpt = userRepo.findByUsername(username);
 
         if (userOpt.isPresent()) {
-            List<User> followers = userRepository.findFollowersByUsername(username);
+            List<User> followers = userRepo.findFollowersByUsername(username);
             Set<String> followerUsernames = new HashSet<>();
             for (User follower : followers) {
                 followerUsernames.add(follower.getUsername());
@@ -102,10 +95,10 @@ public class UserService {
     }
 
     public Set<String> viewFriendRecs(String username) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
+        Optional<User> userOpt = userRepo.findByUsername(username);
 
         if (userOpt.isPresent()) {
-            List<User> friendRecs = userRepository.findRecsByUsername(username);
+            List<User> friendRecs = userRepo.findRecsByUsername(username);
             Set<String> friendRecsUsernames = new HashSet<>();
             for (User friendRec : friendRecs) {
                 friendRecsUsernames.add(friendRec.getUsername());
@@ -118,7 +111,7 @@ public class UserService {
     }
 
     public Set<String> viewPopular() {
-        List<User> popularUsers = userRepository.findPopularUsers();
+        List<User> popularUsers = userRepo.findPopularUsers();
         Set<String> popularUsernames = new HashSet<>();
         for (User popularUser : popularUsers) {
             popularUsernames.add(popularUser.getUsername());
@@ -127,10 +120,10 @@ public class UserService {
     }
 
     public Set<String> viewMutual(String username, String otherUsername) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
+        Optional<User> userOpt = userRepo.findByUsername(username);
 
         if (userOpt.isPresent()) {
-            List<User> mutualFollowings = userRepository.findCommonUsers(username, otherUsername);
+            List<User> mutualFollowings = userRepo.findCommonUsers(username, otherUsername);
             Set<String> mutualFollowingsUsernames = new HashSet<>();
             for (User mutualFollowing : mutualFollowings) {
                 mutualFollowingsUsernames.add(mutualFollowing.getUsername());  // Add the username to the set
@@ -141,68 +134,14 @@ public class UserService {
             return new HashSet<>();
         }
     }
+
+    public Set<String> searchUsers(String query) {
+        List<User> users = userRepo.findByNameContainingIgnoreCaseOrUsernameContainingIgnoreCase(query);
+        Set<String> usernames = new HashSet<>();
+        for (User user : users) {
+            usernames.add(user.getUsername() + " name (" + user.getName() + ")");
+        }
+        return usernames;
+    }
+
 }
-
-
-// @Service
-// public class UserService {
-
-//     @Autowired
-//     private UserRepository userRepository;
-
-//     public User registerUser(String name, String username, String email, String password) {
-//         User user = new User();
-//         user.setName(name);
-//         user.setUsername(username);
-//         user.setEmail(email);
-//         user.setPassword(password);
-//         return userRepository.save(user);
-//     }
-
-//     public Optional<User> login(String username, String password) {
-//         return userRepository.findByUsername(username)
-//                 .filter(u -> u.getPassword().equals(password));
-//     }
-
-//     public Optional<User> viewProfile(String username) {
-//         return userRepository.findByUsername(username);
-//     }
-
-//     public Optional<User> editProfile(String username, String newName, String newEmail) {
-//         Optional<User> userOpt = userRepository.findByUsername(username);
-//         userOpt.ifPresent(user -> {
-//             user.setName(newName);
-//             user.setEmail(newEmail);
-//             userRepository.save(user);
-//         });
-//         return userOpt;
-//     }
-
-//     public boolean follow(String followerUsername, String followeeUsername) {
-//         Optional<User> followerOpt = userRepository.findByUsername(followerUsername);
-//         Optional<User> followeeOpt = userRepository.findByUsername(followeeUsername);
-
-//         if (followerOpt.isPresent() && followeeOpt.isPresent()) {
-//             User follower = followerOpt.get();
-//             User followee = followeeOpt.get();
-//             follower.getFollows().add(followee);
-//             userRepository.save(follower);
-//             return true;
-//         }
-//         return false;
-//     }
-
-//     public boolean unfollow(String followerUsername, String followeeUsername) {
-//         Optional<User> followerOpt = userRepository.findByUsername(followerUsername);
-//         Optional<User> followeeOpt = userRepository.findByUsername(followeeUsername);
-
-//         if (followerOpt.isPresent() && followeeOpt.isPresent()) {
-//             User follower = followerOpt.get();
-//             User followee = followeeOpt.get();
-//             follower.getFollows().remove(followee);
-//             userRepository.save(follower);
-//             return true;
-//         }
-//         return false;
-//     }
-// }
