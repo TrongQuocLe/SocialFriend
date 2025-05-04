@@ -6,6 +6,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Service
 public class UserService {
 
@@ -62,6 +67,79 @@ public class UserService {
     }
     public Long getTotalUsers() {
         return userRepo.getTotalUsers();
+    }
+
+        public Set<String> viewFollowing(String username) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+
+        if (userOpt.isPresent()) {
+            Set<String> followingUsernames = new HashSet<>();
+            for (User followedUser : userOpt.get().getFollows()) {
+                followingUsernames.add(followedUser.getUsername());  // Add the username to the set
+            }
+            return followingUsernames;
+        }
+        else {
+            return new HashSet<>();
+        }
+        
+    }
+    public Set<String> viewFollowers(String username) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+
+        if (userOpt.isPresent()) {
+            List<User> followers = userRepository.findFollowersByUsername(username);
+            Set<String> followerUsernames = new HashSet<>();
+            for (User follower : followers) {
+                followerUsernames.add(follower.getUsername());
+            }
+            return followerUsernames;
+        }
+        else {
+            return new HashSet<>();
+        }
+        
+    }
+
+    public Set<String> viewFriendRecs(String username) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+
+        if (userOpt.isPresent()) {
+            List<User> friendRecs = userRepository.findRecsByUsername(username);
+            Set<String> friendRecsUsernames = new HashSet<>();
+            for (User friendRec : friendRecs) {
+                friendRecsUsernames.add(friendRec.getUsername());
+            }
+            return friendRecsUsernames;
+        }
+        else {
+            return new HashSet<>();
+        }
+    }
+
+    public Set<String> viewPopular() {
+        List<User> popularUsers = userRepository.findPopularUsers();
+        Set<String> popularUsernames = new HashSet<>();
+        for (User popularUser : popularUsers) {
+            popularUsernames.add(popularUser.getUsername());
+        }
+        return popularUsernames;
+    }
+
+    public Set<String> viewMutual(String username, String otherUsername) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+
+        if (userOpt.isPresent()) {
+            List<User> mutualFollowings = userRepository.findCommonUsers(username, otherUsername);
+            Set<String> mutualFollowingsUsernames = new HashSet<>();
+            for (User mutualFollowing : mutualFollowings) {
+                mutualFollowingsUsernames.add(mutualFollowing.getUsername());  // Add the username to the set
+            }
+            return mutualFollowingsUsernames;
+        }
+        else {
+            return new HashSet<>();
+        }
     }
 }
 

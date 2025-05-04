@@ -1,6 +1,7 @@
 package com.socialfriend.backend;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.Scanner;
 
 import org.springframework.boot.SpringApplication;
@@ -75,7 +76,12 @@ public class CliApp {
         System.out.println("2. Edit Profile");
         System.out.println("3. Follow User");
         System.out.println("4. Unfollow User");
-        System.out.println("5. Logout");
+        System.out.println("5. View Following");
+        System.out.println("6. View Followers");
+        System.out.println("7. Friend Recommendations");
+        System.out.println("8. View Popular Users");
+        System.out.println("9. View Mutual Friends");
+        System.out.println("10. Logout");
         System.out.print("Choose: ");
         String input = scanner.nextLine();
         int choice;
@@ -91,7 +97,12 @@ public class CliApp {
             case 2 -> editProfile();
             case 3 -> followUser();
             case 4 -> unfollowUser();
-            case 5 -> {
+            case 5 -> viewFollowing();
+            case 6 -> viewFollowers();
+            case 7 -> viewFriendRecs();
+            case 8 -> viewPopular();
+            case 9 -> viewMutual();
+            case 10 -> {
                 currentUsername = null;
                 System.out.println("👋 Logged out.");
             }
@@ -160,4 +171,34 @@ public class CliApp {
             System.out.println("❌ Unable to unfollow user. ");
         }
     }
+
+    private static void viewFollowing() {
+        Set<String> following = userService.viewFollowing(currentUsername);
+        System.out.print("These are users you follow:\n" + following);
+    }
+
+    private static void viewFollowers() {
+        Set<String> followers = userService.viewFollowers(currentUsername);
+        System.out.print("These are users who follow you:\n" + followers);
+    }
+
+    private static void viewFriendRecs() {
+        Set<String> friendRecs = userService.viewFriendRecs(currentUsername);
+        System.out.print("These are your friend recommendations:\n" + friendRecs);
+    }
+
+    private static void viewPopular() {
+        Set<String> popularUsers = userService.viewPopular();
+        System.out.print("These are the top ten most popular users:\n" + popularUsers);
+    }
+
+    private static void viewMutual() {
+        System.out.print("Enter username of who you want to see mutual friends with: ");
+        String otherUsername = scanner.nextLine();
+
+        Set<String> mutualFollowers = userService.viewMutual(currentUsername, otherUsername);
+        System.out.print("Users followed by both you and " + otherUsername + ":\n" + mutualFollowers);
+    }
+
 }
+
