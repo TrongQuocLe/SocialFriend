@@ -1,11 +1,11 @@
 package com.socialfriend.backend;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ApplicationContext;
-
 import java.util.Optional;
 import java.util.Set;
 import java.util.Scanner;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
 
 public class CliApp {
     private static UserService userService;
@@ -33,18 +33,26 @@ public class CliApp {
         }
     }
 
-    private static void register() {
-        System.out.print("Enter name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter username: ");
+     private static void register() {
+        System.out.print("Username: ");
         String username = scanner.nextLine();
-        System.out.print("Enter email: ");
+        System.out.print("Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Email: ");
         String email = scanner.nextLine();
-        System.out.print("Enter password: ");
+        System.out.print("Password: ");
         String password = scanner.nextLine();
 
-        User user = userService.registerUser(name, username, email, password);
-        System.out.println("✅ Registered as " + user.getUsername());
+        User user = new User();
+        Long newId = userService.getTotalUsers() + 1;
+        user.setId(newId);
+        user.setUsername(username);
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(password);
+
+        userService.register(user);
+        System.out.println("Registered successfully!");
     }
 
     private static void login() {
@@ -53,12 +61,12 @@ public class CliApp {
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
-        Optional<User> user = userService.login(username, password);
+        var user = userService.login(username, password);
         if (user.isPresent()) {
+            System.out.println("Login successful! Welcome " + user.get().getName());
             currentUsername = username;
-            System.out.println("✅ Login successful!");
         } else {
-            System.out.println("❌ Invalid credentials.");
+            System.out.println("Invalid credentials.");
         }
     }
 
@@ -75,7 +83,14 @@ public class CliApp {
         System.out.println("9. View Mutual Friends");
         System.out.println("10. Logout");
         System.out.print("Choose: ");
-        int choice = Integer.parseInt(scanner.nextLine());
+        String input = scanner.nextLine();
+        int choice;
+        try {
+            choice = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Invalid input. Please enter a number.");
+            return;
+        }
 
         switch (choice) {
             case 1 -> viewProfile();
@@ -95,43 +110,65 @@ public class CliApp {
         }
     }
 
+    private static boolean isValidChoice(String input, int numberOfChoices) {
+        int choice;
+        try {
+            choice = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Invalid input. Please enter a number.");
+            return false;
+        }
+
+        if (choice < 1 || choice > numberOfChoices) {
+            System.out.println("❌ Invalid choice. Please enter a number between 1 and " + numberOfChoices + ".");
+            return false;
+        }
+        return true;
+
+    }
     private static void viewProfile() {
-        Optional<User> user = userService.viewProfile(currentUsername);
+        Optional<User> user = userService.getProfile(currentUsername);
         user.ifPresentOrElse(u -> {
+            System.out.println("\n== Profile of " + u.getUsername() + " ==");
             System.out.println("Name: " + u.getName());
             System.out.println("Username: " + u.getUsername());
             System.out.println("Email: " + u.getEmail());
-            System.out.println("Follows: " + u.getFollows().size() + " users");
+            System.out.println("Followers: " + userService.getNumberOfFollower(u.getUsername()));
+            System.out.println("Bio: " + (u.getBio() != null ? u.getBio() : "No bio available"));
         }, () -> System.out.println("❌ Profile not found."));
     }
 
     private static void editProfile() {
+        System.out.println("\n== Edit Profile ==");
         System.out.print("Enter new name: ");
-        String name = scanner.nextLine();
+        String newName = scanner.nextLine();
         System.out.print("Enter new email: ");
-        String email = scanner.nextLine();
-
-        userService.editProfile(currentUsername, name, email);
+        String newEmail = scanner.nextLine();
+        System.out.print("Enter new bio: ");
+        String newBio = scanner.nextLine();
+        userService.updateProfile(currentUsername, newName, newEmail, newBio);
         System.out.println("✅ Profile updated.");
     }
 
     private static void followUser() {
         System.out.print("Enter username to follow: ");
-        String followee = scanner.nextLine();
-        if (userService.follow(currentUsername, followee)) {
-            System.out.println("✅ You are now following " + followee);
-        } else {
-            System.out.println("❌ Unable to follow user.");
-        }
+        String followeeUsername = scanner.nextLine();
+        try {
+            userService.follow(currentUsername, followeeUsername);
+        } catch (Exception e) {
+            System.out.println("❌ Unable to follow user. ");
+        } 
+        System.out.println("✅ You followed " + followeeUsername);
     }
 
     private static void unfollowUser() {
         System.out.print("Enter username to unfollow: ");
-        String followee = scanner.nextLine();
-        if (userService.unfollow(currentUsername, followee)) {
-            System.out.println("✅ You unfollowed " + followee);
-        } else {
-            System.out.println("❌ Unable to unfollow user.");
+        String followeeUsername = scanner.nextLine();
+        try {
+            userService.unfollow(currentUsername, followeeUsername);
+            System.out.println("✅ You unfollowed " + followeeUsername);
+        } catch (Exception e) {
+            System.out.println("❌ Unable to unfollow user. ");
         }
     }
 
@@ -162,4 +199,6 @@ public class CliApp {
         Set<String> mutualFollowers = userService.viewMutual(currentUsername, otherUsername);
         System.out.print("Users followed by both you and " + otherUsername + ":\n" + mutualFollowers);
     }
+
 }
+
