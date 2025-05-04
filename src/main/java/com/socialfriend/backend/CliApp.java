@@ -78,12 +78,11 @@ public class CliApp {
         System.out.println("4. Unfollow User");
         System.out.println("5. View Following");
         System.out.println("6. View Followers");
-        System.out.println("7. Friend Recommendations");
-        System.out.println("8. View Mutual Friends");
-        System.out.println("9. View Friend Recommendations");
-        System.out.println("10. Search Users");
-        System.out.println("11. View popular users");
-        System.out.println("12. Logout");
+        System.out.println("7. View Mutual Friends");
+        System.out.println("8. View Friend Recommendations");
+        System.out.println("9. Search Users");
+        System.out.println("10. View popular users");
+        System.out.println("11. Logout");
         System.out.print("Choose: ");
         String input = scanner.nextLine();
         int choice;
